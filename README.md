@@ -2,11 +2,11 @@ Contact Management System: Feature Summary
 
 Feature and description:
 
-Core CRUD -	Full ability to Create, View, Update, and Delete contacts.
-Data Security -	Duplicate Check Prevents saving the same phone number twice.
-Persistence	- Uses SQLite to ensure all data is saved even after the app is closed.
-Search & Filter -	Case-insensitive search by name with a "Show All" reset button.
-Smart View - Toggle List: Hide or show the contact list with a single click to keep the UI clean.
+- Core CRUD: Full ability to Create, View, Update, and Delete contacts.
+- Data Security: Duplicate Check Prevents saving the same phone number twice.
+- Persistence: Uses SQLite to ensure all data is saved even after the app is closed.
+- Search & Filter:	Case-insensitive search by name with a "Show All" reset button.
+- Smart View: Toggle List Hide or show the contact list with a single click to keep the UI clean.
 
 4 Additional Premium Features:
 
