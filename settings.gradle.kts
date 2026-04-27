@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "CRUD-Based App Development"
-include(":app")
+include(":app")}

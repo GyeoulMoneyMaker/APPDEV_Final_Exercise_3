@@ -64,11 +64,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
+                String rawDate = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE_ADDED));
+                String formattedDate = formatTo12Hour(rawDate);
+
                 Contact contact = new Contact(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE_ADDED)),
+                        formattedDate,
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)) == 1
                 );
                 contactList.add(contact);
@@ -77,6 +80,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return contactList;
+    }
+
+    private String formatTo12Hour(String rawDate) {
+        try {
+            // SQLite default format is yyyy-MM-dd HH:mm:ss
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm a", Locale.getDefault());
+            Date date = inputFormat.parse(rawDate);
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            return rawDate; // Fallback
+        }
     }
 
     public void updateContact(Contact contact) {
@@ -112,11 +127,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
+                String rawDate = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE_ADDED));
+                String formattedDate = formatTo12Hour(rawDate);
+
                 Contact contact = new Contact(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
-                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE_ADDED)),
+                        formattedDate,
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)) == 1
                 );
                 contactList.add(contact);
@@ -125,6 +143,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return contactList;
+    }
+
+    public boolean checkNumberExists(String phone, int excludeId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_CONTACTS + " WHERE " + COLUMN_PHONE + " = ? AND " + COLUMN_ID + " != ?";
+        Cursor cursor = db.rawQuery(query, new String[]{phone, String.valueOf(excludeId)});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        db.close();
+        return exists;
     }
 
     public int getContactCount() {

@@ -88,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
             if (isListVisible) {
                 adapter.updateList(new ArrayList<>());
                 isListVisible = false;
+                Toast.makeText(this, "Contacts hidden", Toast.LENGTH_SHORT).show();
             } else {
                 loadContacts();
                 isListVisible = true;
+                Toast.makeText(this, "Contacts shown", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -209,6 +211,12 @@ public class MainActivity extends AppCompatActivity {
             String phone = etPhone.getText().toString().trim();
 
             if (validateInput(name, phone)) {
+                int contactId = (contact != null) ? contact.getId() : -1;
+                if (dbHelper.checkNumberExists(phone, contactId)) {
+                    Toast.makeText(this, "This phone number is already saved!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (contact != null) {
                     contact.setName(name);
                     contact.setPhoneNumber(phone);
