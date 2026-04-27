@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnShowAll, btnCreate, btnRead, btnUpdate, btnDelete;
     private RecyclerView recyclerView;
 
+    private boolean isListVisible = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,21 +41,21 @@ public class MainActivity extends AppCompatActivity {
         setupRecyclerView();
         setupListeners();
         
-        loadContacts();
+        // Removed loadContacts() to start with an empty list
     }
 
     private void initViews() {
         etSearch = findViewById(R.id.etSearch);
         btnShowAll = findViewById(R.id.btnShowAll);
         btnCreate = findViewById(R.id.btnCreate);
-        btnRead = findViewById(R.id.btnRead);
+        btnRead = findViewById(R.id.btnRead); // This is now "View Contacts"
         btnUpdate = findViewById(R.id.btnUpdate);
         btnDelete = findViewById(R.id.btnDelete);
         recyclerView = findViewById(R.id.recyclerView);
     }
 
     private void setupRecyclerView() {
-        adapter = new ContactAdapter(contactList, contact -> {
+        adapter = new ContactAdapter(new ArrayList<>(), contact -> {
             selectedContact = contact;
             Toast.makeText(this, "Selected: " + contact.getName(), Toast.LENGTH_SHORT).show();
         });
@@ -64,7 +66,19 @@ public class MainActivity extends AppCompatActivity {
     private void setupListeners() {
         btnCreate.setOnClickListener(v -> showContactDialog(null));
         
-        btnRead.setOnClickListener(v -> loadContacts());
+        btnRead.setOnClickListener(v -> {
+            if (isListVisible) {
+                // Hide list
+                adapter.updateList(new ArrayList<>());
+                isListVisible = false;
+                Toast.makeText(this, "Contacts hidden", Toast.LENGTH_SHORT).show();
+            } else {
+                // Show list
+                loadContacts();
+                isListVisible = true;
+                Toast.makeText(this, "Contacts shown", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         btnUpdate.setOnClickListener(v -> {
             if (selectedContact != null) {
@@ -85,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         btnShowAll.setOnClickListener(v -> {
             etSearch.setText("");
             loadContacts();
+            isListVisible = true;
         });
 
         etSearch.addTextChangedListener(new TextWatcher() {
@@ -94,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterContacts(s.toString());
+                isListVisible = true;
             }
 
             @Override
@@ -105,12 +121,14 @@ public class MainActivity extends AppCompatActivity {
         contactList = dbHelper.getAllContacts();
         adapter.updateList(contactList);
         selectedContact = null;
+        isListVisible = true;
     }
 
     private void filterContacts(String query) {
         contactList = dbHelper.searchContacts(query);
         adapter.updateList(contactList);
         selectedContact = null;
+        isListVisible = true;
     }
 
     private void showContactDialog(Contact contact) {
