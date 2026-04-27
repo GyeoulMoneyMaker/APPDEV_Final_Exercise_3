@@ -32,10 +32,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
 
     private TextView tvContactCount;
-    private ImageButton btnSort, btnDarkMode;
+    private ImageButton btnSort;
+    private com.google.android.material.switchmaterial.SwitchMaterial switchDarkMode;
     private boolean isListVisible = false;
     private String currentSortOrder = DatabaseHelper.COLUMN_NAME + " ASC";
-    private boolean isDarkMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         btnUpdate = findViewById(R.id.btnUpdate);
         btnDelete = findViewById(R.id.btnDelete);
         btnSort = findViewById(R.id.btnSort);
-        btnDarkMode = findViewById(R.id.btnDarkMode);
+        switchDarkMode = findViewById(R.id.switchDarkMode);
         tvContactCount = findViewById(R.id.tvContactCount);
         recyclerView = findViewById(R.id.recyclerView);
     }
@@ -135,14 +135,11 @@ public class MainActivity extends AppCompatActivity {
             if (isListVisible) loadContacts();
         });
 
-        btnDarkMode.setOnClickListener(v -> {
-            isDarkMode = !isDarkMode;
-            if (isDarkMode) {
+        switchDarkMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                btnDarkMode.setImageResource(android.R.drawable.ic_menu_recent_history);
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                btnDarkMode.setImageResource(android.R.drawable.ic_menu_day);
             }
         });
 

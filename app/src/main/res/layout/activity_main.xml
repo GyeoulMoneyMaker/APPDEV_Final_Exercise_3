@@ -42,21 +42,23 @@
                     android:layout_centerVertical="true"
                     android:orientation="horizontal">
 
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/switchDarkMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dark"
+                        android:textColor="#FFFFFF"
+                        app:useMaterialThemeColors="false"
+                        app:thumbTint="#FFFFFF"
+                        app:trackTint="#BDBDBD" />
+
                     <ImageButton
                         android:id="@+id/btnSort"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@android:drawable/ic_menu_sort_alphabetically"
-                        app:tint="#FFFFFF" />
-
-                    <ImageButton
-                        android:id="@+id/btnDarkMode"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
                         android:layout_marginStart="8dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@android:drawable/ic_menu_day"
+                        android:src="@android:drawable/ic_menu_sort_alphabetically"
                         app:tint="#FFFFFF" />
                 </LinearLayout>
             </RelativeLayout>
