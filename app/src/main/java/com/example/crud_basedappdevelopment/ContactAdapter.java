@@ -11,41 +11,57 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
+public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
 
-    private List<Contact> contactList;
-    private OnItemClickListener listener;
-    private int selectedPosition = RecyclerView.NO_POSITION;
+    private final List<Contact> contactList;
+    private final OnContactClickListener clickListener;
+    private OnFavoriteClickListener favoriteClickListener;
 
-    public interface OnItemClickListener {
-        void onItemClick(Contact contact);
+    public interface OnContactClickListener {
+        void onContactClick(Contact contact);
     }
 
-    public ContactAdapter(List<Contact> contactList, OnItemClickListener listener) {
+    public interface OnFavoriteClickListener {
+        void onFavoriteClick(Contact contact);
+    }
+
+    public ContactAdapter(List<Contact> contactList, OnContactClickListener clickListener) {
         this.contactList = contactList;
-        this.listener = listener;
+        this.clickListener = clickListener;
+    }
+
+    public void setOnFavoriteClickListener(OnFavoriteClickListener listener) {
+        this.favoriteClickListener = listener;
     }
 
     @NonNull
     @Override
-    public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_contact, parent, false);
-        return new ContactViewHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Contact contact = contactList.get(position);
         holder.tvName.setText(contact.getName());
         holder.tvPhone.setText(contact.getPhoneNumber());
         holder.tvDate.setText(contact.getDateAdded());
 
-        holder.itemView.setSelected(selectedPosition == position);
-        holder.itemView.setOnClickListener(v -> {
-            int previousSelected = selectedPosition;
-            selectedPosition = holder.getAdapterPosition();
-            notifyItemChanged(previousSelected);
-            notifyItemChanged(selectedPosition);
-            listener.onItemClick(contact);
+        if (contact.isFavorite()) {
+            holder.btnFavorite.setImageResource(android.R.drawable.btn_star_big_on);
+            holder.btnFavorite.setColorFilter(Color.parseColor("#FFD700")); // Gold
+        } else {
+            holder.btnFavorite.setImageResource(android.R.drawable.btn_star_big_off);
+            holder.btnFavorite.setColorFilter(null);
+        }
+
+        holder.itemView.setOnClickListener(v -> clickListener.onContactClick(contact));
+
+        holder.btnFavorite.setOnClickListener(v -> {
+            if (favoriteClickListener != null) {
+                favoriteClickListener.onFavoriteClick(contact);
+            }
         });
     }
 
@@ -55,23 +71,21 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     }
 
     public void updateList(List<Contact> newList) {
-        this.contactList = newList;
-        this.selectedPosition = RecyclerView.NO_POSITION;
+        this.contactList.clear();
+        this.contactList.addAll(newList);
         notifyDataSetChanged();
     }
 
-    public int getSelectedPosition() {
-        return selectedPosition;
-    }
-
-    public static class ContactViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvPhone, tvDate;
+        ImageButton btnFavorite;
 
-        public ContactViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvName);
             tvPhone = itemView.findViewById(R.id.tvPhone);
             tvDate = itemView.findViewById(R.id.tvDate);
+            btnFavorite = itemView.findViewById(R.id.btnFavorite);
         }
     }
 }

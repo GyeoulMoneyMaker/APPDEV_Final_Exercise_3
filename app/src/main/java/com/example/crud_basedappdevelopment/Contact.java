@@ -5,17 +5,20 @@ public class Contact {
     private String name;
     private String phoneNumber;
     private String dateAdded;
+    private boolean isFavorite;
 
-    public Contact(int id, String name, String phoneNumber, String dateAdded) {
+    public Contact(int id, String name, String phoneNumber, String dateAdded, boolean isFavorite) {
         this.id = id;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.dateAdded = dateAdded;
+        this.isFavorite = isFavorite;
     }
 
     public Contact(String name, String phoneNumber) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.isFavorite = false;
     }
 
     public int getId() { return id; }
@@ -29,4 +32,7 @@ public class Contact {
 
     public String getDateAdded() { return dateAdded; }
     public void setDateAdded(String dateAdded) { this.dateAdded = dateAdded; }
+
+    public boolean isFavorite() { return isFavorite; }
+    public void setFavorite(boolean favorite) { isFavorite = favorite; }
 }
